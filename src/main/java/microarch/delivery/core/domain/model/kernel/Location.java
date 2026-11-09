@@ -15,11 +15,8 @@ import java.util.List;
 public class Location extends ValueObject<Location> {
     private static final int MIN = 1;
     private static final int MAX = 10;
-    private int x;
-    private int y;
-
-    private Location() {
-    }
+    private final int x;
+    private final int y;
 
     public static Result<Location, Error> create(int x, int y) {
         if ((x < MIN) || (x > MAX)) {
