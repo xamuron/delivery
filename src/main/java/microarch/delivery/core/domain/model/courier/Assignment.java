@@ -10,7 +10,6 @@ import lombok.Getter;
 import microarch.delivery.core.domain.model.kernel.Location;
 import microarch.delivery.core.domain.model.kernel.Volume;
 
-import javax.swing.*;
 import java.util.UUID;
 
 @Getter

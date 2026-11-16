@@ -50,6 +50,24 @@ public class AssignmentTest {
         assertThat(assignment.getStatus()).isEqualTo(AssignmentStatus.COMPLETED);
     }
 
+    @Test
+    void shouldReturnErrorWhenAssignmentIsAlreadyCompleted() {
+        // Arrange
+        var location = Location.create(5, 5).getValue();
+        var volume = Volume.create(10_000).getValue();
+        var assignment = Assignment.create(UUID.randomUUID(), volume, location).getValue();
+        assertThat(assignment.completeAssignment(location).isSuccess()).isTrue();
+        assertThat(assignment.getStatus()).isEqualTo(AssignmentStatus.COMPLETED);
+
+        // Act
+        var result = assignment.completeAssignment(location);
+
+        // Assert
+        assertThat(result.isFailure()).isTrue();
+        assertThat(result.getError().getCode()).isEqualTo("assignment.already.completed");
+        assertThat(assignment.getStatus()).isEqualTo(AssignmentStatus.COMPLETED);
+    }
+
     @ParameterizedTest
     @CsvSource({"7, 5", "6, 6"})
     void shouldReturnErrorWhenCourierIsTooFar(int x, int y) {
