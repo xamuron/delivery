@@ -49,14 +49,15 @@ public class Courier extends Aggregate<UUID> {
     public Result<Boolean, Error> canTakeOrder(Order order) {
         if (order == null) return Result.failure(GeneralErrors.valueIsRequired("order"));
 
-        long totalVolume = 0;
+        var totalVolume = order.getVolume();
         for (Assignment assignment : assignments) {
             if (assignment.getStatus() == AssignmentStatus.ASSIGNED) {
-                totalVolume += assignment.getVolume().getValue();
+                var sum = totalVolume.add(assignment.getVolume());
+                if (sum.isFailure()) return Result.success(false);
+                totalVolume = sum.getValue();
             }
         }
-        boolean canTake = totalVolume + order.getVolume().getValue() <= maxVolume.getValue();
-        return Result.success(canTake);
+        return Result.success(!totalVolume.isGreaterThan(maxVolume));
     }
 
     public UnitResult<Error> takeOrder(Order order) {
