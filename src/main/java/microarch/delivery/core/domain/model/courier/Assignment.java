@@ -48,17 +48,22 @@ public class Assignment extends BaseEntity<UUID> {
         return Result.success(new Assignment(orderId, volume, location));
     }
 
-    public UnitResult<Error> completeAssignment(Location courierLocation) {
-        if (courierLocation == null) {
-            return UnitResult.failure(GeneralErrors.valueIsRequired("courierLocation"));
-        }
-        if (this.status == AssignmentStatus.COMPLETED) {
-            return UnitResult.failure(Error.of("assignment.already.completed", "Назначение уже завершено"));
-        }
-        if (courierLocation.calculateDistance(this.location) > 1) {
-            return UnitResult.failure(Error.of("assignment.courier.too.far", "Для заврешения курьер должен находиться не далее одного шага от доставки"));
-        }
+    UnitResult<Error> completeAssignment(Location courierLocation) {
+        if (courierLocation == null) return UnitResult.failure(GeneralErrors.valueIsRequired("courierLocation"));
+        if (this.status == AssignmentStatus.COMPLETED)  return UnitResult.failure(Errors.assignmentAlreadyCompleted());
+        if (courierLocation.calculateDistance(this.location) > 1) return UnitResult.failure(Errors.courierTooFar());
+
         this.status = AssignmentStatus.COMPLETED;
         return UnitResult.success();
+    }
+
+    public static class Errors {
+        public static Error assignmentAlreadyCompleted() {
+            return Error.of("assignment.already.completed", "Назначение уже завершено");
+        }
+
+        public static Error courierTooFar() {
+            return Error.of("assignment.courier.too.far", "Для заврешения курьер должен находиться не далее одного шага от доставки");
+        }
     }
 }
