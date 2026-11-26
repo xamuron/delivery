@@ -86,7 +86,6 @@ public class Courier extends Aggregate<UUID> {
 
     public UnitResult<Error> moveTo(Location location) {
         if (location == null) return UnitResult.failure(GeneralErrors.valueIsRequired("location"));
-        // судя по интерфейсу по диагонали ходить нельзя, но пока пусть так
         if (this.location.calculateDistance(location) > 1) return UnitResult.failure(Errors.courierStepCanNotBeMoreThanOnePoint());
 
         this.location = location;
