@@ -18,9 +18,9 @@ public class OrderDispatcherServiceImpl implements OrderDispatcherService {
         Objects.requireNonNull(order, "order");
         Objects.requireNonNull(couriers, "couriers");
         if (order.getStatus() != OrderStatus.CREATED)  return Result.failure(Order.Errors.orderMustBeInCreatedStatusForAssign());
-        if (couriers.isEmpty()) return Result.failure(Errors.thereIsNoCouriers());
+        if (couriers.isEmpty()) return Result.failure(Errors.thereAreNoCouriers());
         var availableCouriers = couriers.stream().filter(c -> c.canTakeOrder(order).getValue()).toList();
-        if (availableCouriers.isEmpty()) return Result.failure(Errors.thereIsNoFreeCouriers());
+        if (availableCouriers.isEmpty()) return Result.failure(Errors.thereAreNoFreeCouriers());
 
         Courier winner = null;
         int minDistance = Integer.MAX_VALUE;
@@ -41,11 +41,11 @@ public class OrderDispatcherServiceImpl implements OrderDispatcherService {
     }
 
     public static class Errors {
-        public static Error thereIsNoFreeCouriers() {
+        public static Error thereAreNoFreeCouriers() {
             return Error.of("there.are.no.free.couriers", "Для назначения заказа нет свободных курьеров: все курьеры переполнены");
         }
 
-        public static Error thereIsNoCouriers() {
+        public static Error thereAreNoCouriers() {
             return Error.of("there.are.no.couriers", "Для назначения заказа нет курьеров");
         }
     }
